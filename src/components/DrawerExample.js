@@ -15,7 +15,7 @@ import {
     DrawerCloseButton,
     useDisclosure,
 } from "@chakra-ui/react";
-import { useHistory } from "react-router-dom";
+import { useHistory, withRouter } from "react-router-dom";
 
 import axios from "axios";
 
@@ -40,6 +40,8 @@ function DrawerExample() {
             })
             .then((snapshot) => {
                 console.log("Data Added", snapshot);
+                onClose();
+                history.push("/");
             })
             .catch((err) => console.log(err));
     };
@@ -81,6 +83,7 @@ function DrawerExample() {
                                             Hospital Name
                                         </FormLabel>
                                         <Input
+                                            ref={firstField}
                                             id="username"
                                             color="white"
                                             placeholder="E.x. Apollo Hospitals"
@@ -145,4 +148,4 @@ function DrawerExample() {
     );
 }
 
-export default DrawerExample;
+export default withRouter(DrawerExample);
