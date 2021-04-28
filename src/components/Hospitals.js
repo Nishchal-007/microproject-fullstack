@@ -5,59 +5,113 @@ import {
     Heading,
     Text,
     SimpleGrid,
+    Input,
+    Button,
     Center,
+    Drawer,
+    DrawerBody,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerOverlay,
+    DrawerContent,
+    DrawerCloseButton,
+    useDisclosure,
 } from "@chakra-ui/react";
 import { DeleteIcon } from "@chakra-ui/icons";
 
 import axios from "axios";
 
-function Feature({ title, desc, ...rest }) {
-    return (
-        <Box
-            p={5}
-            shadow="md"
-            borderWidth="1px"
-            flex="1"
-            borderRadius="md"
-            {...rest}
-        >
-            <Heading fontSize="xl" color="white">
-                {title}
-            </Heading>
-            <Text mt={4} color="white">
-                {desc}
-            </Text>
-
-            <DeleteIcon
-                w={6}
-                h={6}
-                color="red.500"
-                style={{ cursor: "pointer" }}
-                marginTop={8}
-                onClick={() => alert("Delete")}
-            />
-        </Box>
-    );
-}
-
 const Hospitals = () => {
     const [lt, setLt] = useState(null);
     const [loading, setLoading] = useState(false);
 
+    function DrawerExample() {
+        const { isOpen, onOpen, onClose } = useDisclosure();
+        const btnRef = React.useRef();
+
+        return (
+            <>
+                <Button ref={btnRef} onClick={onOpen}>
+                    Open
+                </Button>
+                <Drawer
+                    isOpen={isOpen}
+                    placement="right"
+                    onClose={onClose}
+                    finalFocusRef={btnRef}
+                >
+                    <DrawerOverlay>
+                        <DrawerContent>
+                            <DrawerCloseButton />
+                            <DrawerHeader>Create your account</DrawerHeader>
+
+                            <DrawerBody>
+                                <Input placeholder="Type here..." />
+                            </DrawerBody>
+
+                            <DrawerFooter>
+                                <Button
+                                    variant="outline"
+                                    mr={3}
+                                    onClick={onClose}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button colorScheme="blue">Save</Button>
+                            </DrawerFooter>
+                        </DrawerContent>
+                    </DrawerOverlay>
+                </Drawer>
+            </>
+        );
+    }
+
+    function Feature({ name, address, location, contact, id, ...rest }) {
+        return (
+            <Box
+                p={5}
+                shadow="md"
+                borderWidth="1px"
+                flex="1"
+                borderRadius="md"
+                {...rest}
+            >
+                <Heading fontSize="xl" color="white">
+                    {name}
+                </Heading>
+                <Text mt={4} color="white">
+                    Address: {address}
+                </Text>
+                <Text mt={4} color="white">
+                    Co-ordinates: {location}
+                </Text>
+                <Text mt={4} color="white">
+                    Contact: {contact}
+                </Text>
+
+                <DeleteIcon
+                    w={6}
+                    h={6}
+                    color="red.500"
+                    style={{ cursor: "pointer" }}
+                    marginTop={8}
+                    onClick={() => handleDelete(id)}
+                />
+            </Box>
+        );
+    }
+
+    const handleDelete = (id) => {
+        axios
+            .delete(`/hospitals/delete/${id}`)
+            .then((snap) => {
+                console.log("Deleted: ", snap);
+                setLt(lt.filter((x) => x.hId !== id));
+            })
+            .catch((err) => console.log(err));
+    };
+
     useEffect(() => {
-        // async function getData() {
-        //     setLoading(true);
-        //     axios
-        //         .get("/hospitals")
-        //         .then((snap) => {
-        //             // console.log(snap.data);
-        //             setLt(snap.data);
-        //         })
-        //         .catch((err) => {
-        //             console.log("Error:", err);
-        //         });
-        // }
-        // getData();
         setLoading(true);
         fetch("/hospitals")
             .then((response) => response.json())
@@ -95,7 +149,7 @@ const Hospitals = () => {
                             px={4}
                             h={8}
                         >
-                            Add Hospital
+                            <DrawerExample />
                         </Box>
                     </Container>
                     <SimpleGrid
@@ -106,8 +160,11 @@ const Hospitals = () => {
                         {lt.map((data) => (
                             <Feature
                                 key={data._id}
-                                title={data.name}
-                                desc={data.address}
+                                name={data.name}
+                                address={data.address}
+                                location={data.location}
+                                contact={data.contactNo}
+                                id={data.hId}
                             />
                         ))}
                     </SimpleGrid>
@@ -118,34 +175,3 @@ const Hospitals = () => {
 };
 
 export default Hospitals;
-
-{
-    /* <Feature
-    title="Save Money"
-    desc="You deserve good things. With a whooping 10-15% interest rate per annum, grow your savings."
-/>
-<Feature
-    title="Save Money"
-    desc="You deserve good things. With a whooping 10-15% interest rate per annum, grow your savings."
-/>
-<Feature
-    title="Save Money"
-    desc="You deserve good things. With a whooping 10-15% interest rate per annum, grow your savings."
-/>
-<Feature
-    title="Save Money"
-    desc="You deserve good things. With a whooping 10-15% interest rate per annum, grow your savings."
-/>
-<Feature
-    title="Save Money"
-    desc="You deserve good things. With a whooping 10-15% interest rate per annum, grow your savings."
-/>
-<Feature
-    title="Save Money"
-    desc="You deserve good things. With a whooping 10-15% interest rate per annum, grow your savings."
-/>
-<Feature
-    title="Save Money"
-    desc="You deserve good things. With a whooping 10-15% interest rate per annum, grow your savings."
-/> */
-}
