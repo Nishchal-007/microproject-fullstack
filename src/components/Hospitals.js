@@ -61,11 +61,14 @@ const Hospitals = () => {
 
     if (!lt || lt.length === 0) {
         return (
-            <Container centerContent padding={10}>
-                <Heading padding={10} color="white">
-                    Loading . . . .
-                </Heading>
-            </Container>
+            <>
+                <Container centerContent padding={10}>
+                    <Heading padding={10} color="white">
+                        Add Hospitals !!
+                    </Heading>
+                    <DrawerExample />
+                </Container>
+            </>
         );
     }
     return (
